@@ -38,7 +38,8 @@ public class SecurityConfiguration {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/admin").authenticated()
+                        .anyRequest().authenticated()
+
                 )
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
 
