@@ -6,15 +6,20 @@ import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import lombok.AllArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.kenuki.landingserver.dtos.RequestDTO;
+import org.kenuki.landingserver.entities.Content;
 import org.kenuki.landingserver.entities.Request;
+import org.kenuki.landingserver.repositories.ContentRepository;
 import org.kenuki.landingserver.repositories.RequestRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class RequestService {
     private RequestRepository requestRepository;
+    private ContentRepository contentRepository;
     public ResponseEntity<?> createNewRequest(RequestDTO requestDTO){
         if(!EmailValidator.getInstance().isValid(requestDTO.getEmail())){
             return ResponseEntity.badRequest().body("Wrong email!");
@@ -33,5 +38,14 @@ public class RequestService {
         return ResponseEntity.ok("Success!");
     }
 
+    public ResponseEntity<?> getTextContent(String key){
+        Optional<Content> contentOptional = contentRepository.findById(key);
+        if(contentOptional.isEmpty()){
+            return ResponseEntity.badRequest().body("Content not found!");
+        }else{
+            Content content = contentOptional.get();
+            return ResponseEntity.ok(content.getContent());
+        }
+    }
 
 }

@@ -21,6 +21,11 @@ public class MainController {
         return requestService.createNewRequest(requestDTO);
     }
 
+    @GetMapping("/content")
+    public ResponseEntity<?> getTextContent(@RequestParam String key){
+        return requestService.getTextContent(key);
+    }
+
 
 
 }

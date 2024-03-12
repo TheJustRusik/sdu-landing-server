@@ -13,12 +13,18 @@ create table requests (
     created_at  TIMESTAMP
 );
 
-insert into users values (
-                          1, 'Admin', '$2a$05$qGutJh4i/RsIpwccDu4PQOSfCZoTMBARIqMgk0VMUTJvnzSL/36Fi', 'ADMIN'
-                         );
+create table contents (
+    id          varchar(255) primary key,
+    content     character large object not null
+);
 
-insert into requests values (
-                             1, 'Test Name', 'test_mail@gmail.com', '+1 (123) 456 78 90', '2024-03-11 14:30:00'
-                            );
+insert into users values
+                      (1, 'Admin', '$2a$05$qGutJh4i/RsIpwccDu4PQOSfCZoTMBARIqMgk0VMUTJvnzSL/36Fi', 'ADMIN');
+
+insert into contents values
+                      ('phone_number', '+7 (777)-777-7777'),
+                      ('logo_image', 'images/logo.png'),
+                      ('license_file', 'files/LICENSE.md');
+
 
 
