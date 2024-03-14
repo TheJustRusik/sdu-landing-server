@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RequestDTO {
+public class ColdRequestDTO {
     private String name;
-    private String email;
-    private String phone_number;
+    private String phone;
 }

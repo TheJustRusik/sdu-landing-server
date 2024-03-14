@@ -1,7 +1,8 @@
 package org.kenuki.landingserver.controllers;
 
 import lombok.AllArgsConstructor;
-import org.kenuki.landingserver.dtos.RequestDTO;
+import org.kenuki.landingserver.dtos.ColdRequestDTO;
+import org.kenuki.landingserver.dtos.HotRequestDTO;
 import org.kenuki.landingserver.services.RequestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +16,13 @@ public class MainController {
     public String dataForAll(){
         return "This data is for all!";
     }
-
-    @PostMapping("/request")
-    public ResponseEntity<?> leaveRequest(@RequestBody RequestDTO requestDTO){
-        return requestService.createNewRequest(requestDTO);
+    @PostMapping("/request_hot")
+    public ResponseEntity<?> leaveHotRequest(@RequestBody HotRequestDTO hotRequestDTO){
+        return requestService.createNewHotRequest(hotRequestDTO);
     }
-
-    @GetMapping("/content")
-    public ResponseEntity<?> getTextContent(@RequestParam String key){
-        return requestService.getTextContent(key);
+    @PostMapping("/request_cold")
+    public ResponseEntity<?> leaveColdRequest(@RequestBody ColdRequestDTO coldRequestDTO){
+        return requestService.createNewColdRequest(coldRequestDTO);
     }
 
 

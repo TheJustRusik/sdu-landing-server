@@ -23,24 +23,5 @@ public class AdminController {
     public ResponseEntity<?> updatePassword(@RequestParam String new_password){
         return adminService.updatePassword(new_password, SecurityContextHolder.getContext().getAuthentication());
     }
-    @GetMapping("/content")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> getAllContent(){
-        return adminService.getAllContent();
-    }
-    @PostMapping("/content")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> createContent(@RequestParam String key, @RequestParam String content){
-        return adminService.createTextContent(key, content);
-    }
-    @PutMapping("/content")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> updateContent(@RequestParam String key, @RequestParam String new_content){
-        return adminService.updateTextContent(key, new_content);
-    }
-    @DeleteMapping("/content")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> deleteContent(@RequestParam String key){
-        return adminService.removeTextContent(key);
-    }
+
 }

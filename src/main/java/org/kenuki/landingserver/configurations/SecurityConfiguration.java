@@ -38,8 +38,8 @@ public class SecurityConfiguration {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/request").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/content").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/request_cold").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/request_hot").permitAll()
                         .anyRequest().authenticated()
 
                 )

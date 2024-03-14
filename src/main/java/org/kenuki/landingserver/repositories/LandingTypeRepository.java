@@ -1,10 +1,9 @@
 package org.kenuki.landingserver.repositories;
 
-import org.kenuki.landingserver.entities.Request;
+import org.kenuki.landingserver.entities.LandingType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RequestRepository extends JpaRepository<Request, Long> {
-
+public interface LandingTypeRepository extends JpaRepository<LandingType, Long> {
 }
