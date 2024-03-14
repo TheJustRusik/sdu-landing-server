@@ -14,6 +14,7 @@ import org.kenuki.landingserver.messages.DefaultMessages;
 import org.kenuki.landingserver.repositories.ColdRequestRepository;
 import org.kenuki.landingserver.repositories.HotRequestRepository;
 import org.kenuki.landingserver.repositories.LandingTypeRepository;
+import org.kenuki.landingserver.repositories.ReviewRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class RequestService {
     private HotRequestRepository hotRequestRepository;
     private ColdRequestRepository coldRequestRepository;
     private LandingTypeRepository landingTypeRepository;
+    private ReviewRepository reviewRepository;
     public ResponseEntity<?> createNewHotRequest(HotRequestDTO hotRequestDTO){
         if(!EmailValidator.getInstance().isValid(hotRequestDTO.getEmail())){
             return ResponseEntity.badRequest().body(DefaultMessages.wrongMail);
@@ -65,7 +67,11 @@ public class RequestService {
         coldRequestRepository.save(coldRequest);
         return ResponseEntity.ok(DefaultMessages.success);
     }
+    public ResponseEntity<?> getAllReviews() {
+        return ResponseEntity.ok(reviewRepository.findAll());
+    }
 
+    public ResponseEntity<?> getAllPortfolios() {
 
-
+    }
 }

@@ -4,11 +4,12 @@ import lombok.AllArgsConstructor;
 import org.kenuki.landingserver.dtos.ColdRequestDTO;
 import org.kenuki.landingserver.dtos.HotRequestDTO;
 import org.kenuki.landingserver.services.RequestService;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 @AllArgsConstructor
 public class MainController {
     private RequestService requestService;
@@ -24,7 +25,18 @@ public class MainController {
     public ResponseEntity<?> leaveColdRequest(@RequestBody ColdRequestDTO coldRequestDTO){
         return requestService.createNewColdRequest(coldRequestDTO);
     }
+    @GetMapping("/reviews")
+    public ResponseEntity<?> getResponses(){
+        return requestService.getAllReviews();
+    }
+    @GetMapping("/portfolios")
+    public ResponseEntity<?> getPortfolios(){
+        return requestService.getAllPortfolios();
+    }
+    @GetMapping("/images/{image_id:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String image_id){
 
+    }
 
 
 }
