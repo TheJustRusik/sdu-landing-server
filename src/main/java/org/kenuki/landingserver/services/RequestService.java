@@ -9,15 +9,16 @@ import org.kenuki.landingserver.dtos.ColdRequestDTO;
 import org.kenuki.landingserver.dtos.HotRequestDTO;
 import org.kenuki.landingserver.entities.ColdRequest;
 import org.kenuki.landingserver.entities.HotRequest;
+import org.kenuki.landingserver.entities.Image;
 import org.kenuki.landingserver.entities.LandingType;
+import org.kenuki.landingserver.exceptions.ImageNotFoundException;
 import org.kenuki.landingserver.messages.DefaultMessages;
-import org.kenuki.landingserver.repositories.ColdRequestRepository;
-import org.kenuki.landingserver.repositories.HotRequestRepository;
-import org.kenuki.landingserver.repositories.LandingTypeRepository;
-import org.kenuki.landingserver.repositories.ReviewRepository;
+import org.kenuki.landingserver.repositories.*;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
 import java.util.Optional;
 
 @Service
@@ -27,6 +28,9 @@ public class RequestService {
     private ColdRequestRepository coldRequestRepository;
     private LandingTypeRepository landingTypeRepository;
     private ReviewRepository reviewRepository;
+    private PortfolioRepository portfolioRepository;
+    private ImageServices imageServices;
+    private ImageRepository imageRepository;
     public ResponseEntity<?> createNewHotRequest(HotRequestDTO hotRequestDTO){
         if(!EmailValidator.getInstance().isValid(hotRequestDTO.getEmail())){
             return ResponseEntity.badRequest().body(DefaultMessages.wrongMail);
@@ -34,9 +38,9 @@ public class RequestService {
         if(hotRequestDTO.getName().length() < 2){
             return ResponseEntity.badRequest().body(DefaultMessages.wrongName);
         }
-        PhoneNumber phonenumber;
+        PhoneNumber phoneNumber;
         try{
-            phonenumber = PhoneNumberUtil.getInstance().parse(hotRequestDTO.getPhone_number(), "KZ");
+            phoneNumber = PhoneNumberUtil.getInstance().parse(hotRequestDTO.getPhone_number(), "KZ");
         } catch (NumberParseException e) {
             return ResponseEntity.badRequest().body(DefaultMessages.wrongPhone);
         }
@@ -47,7 +51,7 @@ public class RequestService {
         HotRequest request = new HotRequest();
         request.setName(hotRequestDTO.getName());
         request.setEmail(hotRequestDTO.getEmail());
-        request.setPhone(PhoneNumberUtil.getInstance().format(phonenumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL));
+        request.setPhone(PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL));
         request.setLandingType(landingType.get());
         hotRequestRepository.save(request);
         return ResponseEntity.ok(DefaultMessages.success);
@@ -63,7 +67,7 @@ public class RequestService {
         }
         ColdRequest coldRequest = new ColdRequest();
         coldRequest.setName(coldRequestDTO.getName());
-        coldRequest.setPhone(coldRequestDTO.getPhone());
+        coldRequest.setPhone(PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL));
         coldRequestRepository.save(coldRequest);
         return ResponseEntity.ok(DefaultMessages.success);
     }
@@ -72,6 +76,21 @@ public class RequestService {
     }
 
     public ResponseEntity<?> getAllPortfolios() {
+        return ResponseEntity.ok(portfolioRepository.findAll());
+    }
+    public ResponseEntity<?> getImage(Long id){
+        Optional<Image> optionalImage = imageRepository.findById(id);
+        if(optionalImage.isEmpty()){
+            return ResponseEntity.badRequest().body(DefaultMessages.imageNotFound);
+        }
+        try {
+            Resource image = imageServices.loadImage(optionalImage.get().getUrl());
+            return ResponseEntity.ok(image);
+        }catch (MalformedURLException e) {
+            return ResponseEntity.badRequest().body(DefaultMessages.badImage);
+        } catch (ImageNotFoundException e) {
+            return ResponseEntity.badRequest().body(DefaultMessages.imageNotFound);
+        }
 
     }
 }

@@ -1,6 +1,7 @@
 package org.kenuki.landingserver.controllers;
 
 import lombok.AllArgsConstructor;
+import org.kenuki.landingserver.dtos.admin.PortfolioDTO;
 import org.kenuki.landingserver.services.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:5500")
 public class AdminController {
     private AdminService adminService;
     @GetMapping("/")
@@ -24,4 +26,14 @@ public class AdminController {
         return adminService.updatePassword(new_password, SecurityContextHolder.getContext().getAuthentication());
     }
 
+    @PostMapping("/portfolio")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> createPortfolio(@RequestBody PortfolioDTO portfolioDTO){
+        return adminService.addPortfolio(portfolioDTO);
+    }
+    @DeleteMapping("/portfolio")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> deletePortfolio(@RequestParam String title){
+        return adminService.deletePortfolio(title);
+    }
 }

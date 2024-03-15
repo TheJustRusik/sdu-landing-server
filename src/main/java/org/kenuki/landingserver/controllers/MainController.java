@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:5500")
 public class MainController {
     private RequestService requestService;
     @GetMapping("/")
@@ -34,9 +35,7 @@ public class MainController {
         return requestService.getAllPortfolios();
     }
     @GetMapping("/images/{image_id:.+}")
-    public ResponseEntity<Resource> getImage(@PathVariable String image_id){
-
+    public ResponseEntity<?> getImage(@PathVariable Long image_id){
+        return requestService.getImage(image_id);
     }
-
-
 }

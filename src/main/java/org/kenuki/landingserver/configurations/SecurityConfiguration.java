@@ -35,11 +35,13 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/")             .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/request_cold").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/request_hot").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/request_hot") .permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/portfolios")  .permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/images/")     .permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/reviews")     .permitAll()
                         .anyRequest().authenticated()
 
                 )
