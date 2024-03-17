@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +29,10 @@ public class SecurityConfiguration {
         return new LandingUserDetailsService();
     }
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+    @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService());
@@ -35,25 +40,18 @@ public class SecurityConfiguration {
         return provider;
     }
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/api/")             .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/request_cold").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/request_hot") .permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/api/portfolios")  .permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/api/images/")     .permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/api/reviews")     .permitAll()
+                        .requestMatchers("/auth/signin").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
-
                 )
-                .formLogin(AbstractHttpConfigurer::disable);
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .formLogin(AbstractAuthenticationFilterConfigurer::disable);
 
         return http.build();
     }
