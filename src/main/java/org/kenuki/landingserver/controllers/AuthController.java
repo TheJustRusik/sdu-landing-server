@@ -19,14 +19,13 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/signin")
-
     public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginDTO){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return ResponseEntity.ok(DefaultMessages.success);
+        return ResponseEntity.ok(authentication);
     }
 
 }

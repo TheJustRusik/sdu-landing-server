@@ -49,9 +49,9 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .formLogin(AbstractAuthenticationFilterConfigurer::disable);
+                .formLogin(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
