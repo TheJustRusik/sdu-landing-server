@@ -11,6 +11,7 @@ public class DefaultMessages {
     public static final String badImage = "Bad image, can't read it!";
     public static final String badAccess = "Bad access!";
     public static final String cantSaveImage = "Can't save image!";
-
+    public static final String imageTitleAlreadyExist = "Image with this title is already exist!";
+    public static final String reviewNotFound = "Review not found!";
 
 }

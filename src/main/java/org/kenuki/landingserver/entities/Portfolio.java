@@ -8,12 +8,15 @@ import lombok.Data;
 @Table(name = "portfolios")
 public class Portfolio {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "img_id")
-    private Image image;
+    @Column(unique = true, nullable = false)
+    private String image;
 }

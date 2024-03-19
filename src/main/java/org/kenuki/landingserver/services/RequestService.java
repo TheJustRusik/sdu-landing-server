@@ -7,22 +7,22 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.kenuki.landingserver.dtos.ColdRequestDTO;
 import org.kenuki.landingserver.dtos.HotRequestDTO;
-import org.kenuki.landingserver.dtos.PortfolioDTO;
-import org.kenuki.landingserver.dtos.PortfolioResponseDTO;
-import org.kenuki.landingserver.entities.Image;
 import org.kenuki.landingserver.entities.LandingType;
 import org.kenuki.landingserver.entities.Order;
+import org.kenuki.landingserver.entities.Portfolio;
+import org.kenuki.landingserver.entities.Review;
 import org.kenuki.landingserver.exceptions.ImageNotFoundException;
 import org.kenuki.landingserver.messages.DefaultMessages;
 import org.kenuki.landingserver.repositories.*;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,8 +32,7 @@ public class RequestService {
     private ReviewRepository reviewRepository;
     private PortfolioRepository portfolioRepository;
     private ImageServices imageServices;
-    private ImageRepository imageRepository;
-    public ResponseEntity<?> createNewHotRequest(HotRequestDTO hotRequestDTO){
+    public ResponseEntity<String> createNewHotRequest(HotRequestDTO hotRequestDTO){
         if(!EmailValidator.getInstance().isValid(hotRequestDTO.getEmail())){
             return ResponseEntity.badRequest().body(DefaultMessages.wrongMail);
         }
@@ -55,10 +54,12 @@ public class RequestService {
         request.setEmail(hotRequestDTO.getEmail());
         request.setPhone(PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL));
         request.setLandingType(landingType.get());
+        request.setChecked(false);
+        request.setStatus(0);
         ordersRepository.save(request);
         return ResponseEntity.ok(DefaultMessages.success);
     }
-    public ResponseEntity<?> createNewColdRequest(ColdRequestDTO coldRequestDTO){
+    public ResponseEntity<String> createNewColdRequest(ColdRequestDTO coldRequestDTO){
         if(coldRequestDTO.getName().length() < 2)
             return ResponseEntity.badRequest().body(DefaultMessages.wrongName);
         PhoneNumber phoneNumber;
@@ -69,35 +70,31 @@ public class RequestService {
         }
         Order order = new Order();
         order.setName(coldRequestDTO.getName());
+        order.setChecked(false);
         order.setPhone(PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL));
+        order.setStatus(0);
         ordersRepository.save(order);
         return ResponseEntity.ok(DefaultMessages.success);
     }
-    public ResponseEntity<?> getAllReviews() {
-        return ResponseEntity.ok(reviewRepository.findAll());
+    public ResponseEntity<List<Review>> getAllReviews() {
+        return ResponseEntity.ok(reviewRepository.findAllByVisibleIsTrue());
     }
-
-    public ResponseEntity<?> getAllPortfolios() {
-        List<PortfolioResponseDTO> response = portfolioRepository.findAll().stream().map(portfolio -> {
-            Resource image;
-            try {
-                image = imageServices.loadImage(portfolio.getImage().getUrl());
-            } catch (MalformedURLException | ImageNotFoundException e) {
-                image = null;
-            }
-            return new PortfolioResponseDTO(portfolio.getTitle(), portfolio.getDescription(), image);
-        }).toList();
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<Portfolio>> getAllPortfolios() {
+        return ResponseEntity.ok(portfolioRepository.findAll());
     }
-    public ResponseEntity<?> getImage(Long id){
-        Optional<Image> optionalImage = imageRepository.findById(id);
-        if(optionalImage.isEmpty()){
+    public ResponseEntity<?> getImage(String id){
+        Optional<Portfolio> portfolio = portfolioRepository.findByImage(id);
+        if(portfolio.isEmpty()){
             return ResponseEntity.badRequest().body(DefaultMessages.imageNotFound);
         }
         try {
-            Resource image = imageServices.loadImage(optionalImage.get().getUrl());
-            return ResponseEntity.ok(image);
+            Resource image = imageServices.loadImage(portfolio.get().getImage());
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=\"" + image.getFilename() + "\"")
+                    .body(image);
+
         }catch (MalformedURLException e) {
             return ResponseEntity.badRequest().body(DefaultMessages.badImage);
         } catch (ImageNotFoundException e) {
@@ -105,4 +102,5 @@ public class RequestService {
         }
 
     }
+
 }

@@ -2,7 +2,6 @@ package org.kenuki.landingserver.services;
 
 import lombok.AllArgsConstructor;
 import org.kenuki.landingserver.configurations.ImageStorageConfiguration;
-import org.kenuki.landingserver.entities.Image;
 import org.kenuki.landingserver.exceptions.BadImagePathException;
 import org.kenuki.landingserver.exceptions.ImageNotFoundException;
 import org.kenuki.landingserver.messages.DefaultMessages;
@@ -36,7 +35,7 @@ public class ImageServices {
         }
 
     }
-    public Image storeImage(MultipartFile image) throws IOException, BadImagePathException {
+    public String storeImage(MultipartFile image) throws IOException, BadImagePathException {
 
         if (image.isEmpty()){
             throw new IOException();
@@ -45,9 +44,7 @@ public class ImageServices {
         if(path.getParent().equals(rootPath.toAbsolutePath())) {
             InputStream inputStream = image.getInputStream();
             Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
-            Image imageEntity = new Image();
-            imageEntity.setUrl(path.getFileName().toString());
-            return imageEntity;
+            return path.getFileName().toString();
         }else {
             throw new BadImagePathException(DefaultMessages.badAccess);
         }
@@ -59,4 +56,5 @@ public class ImageServices {
         }
         Files.delete(path);
     }
+
 }

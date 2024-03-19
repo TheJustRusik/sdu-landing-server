@@ -2,6 +2,7 @@ package org.kenuki.landingserver.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
@@ -19,6 +20,12 @@ public class Order {
 
     @Column(nullable = false)
     private String phone;
+
+    @Column(nullable = false, columnDefinition = "bool default false")
+    private Boolean checked;
+
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private Integer status;
 
     @ManyToOne
     @JoinColumn(name = "type_id")

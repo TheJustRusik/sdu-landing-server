@@ -3,9 +3,13 @@ package org.kenuki.landingserver.controllers;
 import lombok.AllArgsConstructor;
 import org.kenuki.landingserver.dtos.ColdRequestDTO;
 import org.kenuki.landingserver.dtos.HotRequestDTO;
+import org.kenuki.landingserver.entities.Portfolio;
+import org.kenuki.landingserver.entities.Review;
 import org.kenuki.landingserver.services.RequestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -26,15 +30,15 @@ public class MainController {
         return requestService.createNewColdRequest(coldRequestDTO);
     }
     @GetMapping("/reviews")
-    public ResponseEntity<?> getResponses(){
+    public ResponseEntity<List<Review>> getReviews(){
         return requestService.getAllReviews();
     }
     @GetMapping("/portfolios")
-    public ResponseEntity<?> getPortfolios(){
+    public ResponseEntity<List<Portfolio>> getPortfolios(){
         return requestService.getAllPortfolios();
     }
-    @GetMapping("/images/{image_id:.+}")
-    public ResponseEntity<?> getImage(@PathVariable Long image_id){
-        return requestService.getImage(image_id);
+    @GetMapping("/images/{image_name}")
+    public ResponseEntity<?> getImage(@PathVariable String image_name){
+        return requestService.getImage(image_name);
     }
 }

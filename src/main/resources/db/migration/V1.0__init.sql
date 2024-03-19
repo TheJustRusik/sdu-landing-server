@@ -5,11 +5,6 @@ create table landing_types (
     discount    double not null
 );
 
-create table images (
-    id          bigint auto_increment primary key,
-    url         varchar(255) unique not null
-);
-
 create table users (
     id          bigint auto_increment primary key,
     name        varchar(16) not null unique,
@@ -21,21 +16,26 @@ create table orders (
     id          bigint auto_increment primary key,
     name        varchar(64) not null,
     phone       varchar(32) not null,
-    created_at  TIMESTAMP   not null ,
+    created_at  TIMESTAMP   not null,
+    checked     bool        not null default false,
+    status      int         not null default 0,
 
     type_id     bigint references landing_types(id),
     email       varchar(64)
 );
 
 create table reviews (
-    author          varchar(64) primary key,
-    review          text not null
+    id              bigint auto_increment primary key,
+    author          varchar(64) not null,
+    review          text not null,
+    visible         boolean not null
 );
 
 create table portfolios (
-    title           varchar(64) primary key,
+    id              bigint auto_increment primary key,
+    title           varchar(64) not null,
     description     text not null,
-    img_id          bigint references images(id)
+    image           varchar(255) unique not null
 );
 
 insert into users values
