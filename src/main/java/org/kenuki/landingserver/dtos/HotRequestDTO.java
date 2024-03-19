@@ -9,5 +9,5 @@ public class HotRequestDTO {
     private String name;
     private String email;
     private String phone_number;
-    private Long   landing_type;
+    private Integer landing_type;
 }

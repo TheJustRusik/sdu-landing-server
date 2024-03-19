@@ -7,10 +7,11 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.kenuki.landingserver.dtos.ColdRequestDTO;
 import org.kenuki.landingserver.dtos.HotRequestDTO;
-import org.kenuki.landingserver.entities.ColdRequest;
-import org.kenuki.landingserver.entities.HotRequest;
+import org.kenuki.landingserver.dtos.PortfolioDTO;
+import org.kenuki.landingserver.dtos.PortfolioResponseDTO;
 import org.kenuki.landingserver.entities.Image;
 import org.kenuki.landingserver.entities.LandingType;
+import org.kenuki.landingserver.entities.Order;
 import org.kenuki.landingserver.exceptions.ImageNotFoundException;
 import org.kenuki.landingserver.messages.DefaultMessages;
 import org.kenuki.landingserver.repositories.*;
@@ -19,13 +20,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class RequestService {
-    private HotRequestRepository hotRequestRepository;
-    private ColdRequestRepository coldRequestRepository;
+    private OrdersRepository ordersRepository;
     private LandingTypeRepository landingTypeRepository;
     private ReviewRepository reviewRepository;
     private PortfolioRepository portfolioRepository;
@@ -48,12 +50,12 @@ public class RequestService {
         if(landingType.isEmpty()){
             return ResponseEntity.badRequest().body(DefaultMessages.wrongLandingType);
         }
-        HotRequest request = new HotRequest();
+        Order request = new Order();
         request.setName(hotRequestDTO.getName());
         request.setEmail(hotRequestDTO.getEmail());
         request.setPhone(PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL));
         request.setLandingType(landingType.get());
-        hotRequestRepository.save(request);
+        ordersRepository.save(request);
         return ResponseEntity.ok(DefaultMessages.success);
     }
     public ResponseEntity<?> createNewColdRequest(ColdRequestDTO coldRequestDTO){
@@ -61,14 +63,14 @@ public class RequestService {
             return ResponseEntity.badRequest().body(DefaultMessages.wrongName);
         PhoneNumber phoneNumber;
         try {
-            phoneNumber = PhoneNumberUtil.getInstance().parse(coldRequestDTO.getPhone(), "KZ");
+            phoneNumber = PhoneNumberUtil.getInstance().parse(coldRequestDTO.getPhone_number(), "KZ");
         } catch (NumberParseException e) {
             return ResponseEntity.badRequest().body(DefaultMessages.wrongPhone);
         }
-        ColdRequest coldRequest = new ColdRequest();
-        coldRequest.setName(coldRequestDTO.getName());
-        coldRequest.setPhone(PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL));
-        coldRequestRepository.save(coldRequest);
+        Order order = new Order();
+        order.setName(coldRequestDTO.getName());
+        order.setPhone(PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL));
+        ordersRepository.save(order);
         return ResponseEntity.ok(DefaultMessages.success);
     }
     public ResponseEntity<?> getAllReviews() {
@@ -76,7 +78,17 @@ public class RequestService {
     }
 
     public ResponseEntity<?> getAllPortfolios() {
-        return ResponseEntity.ok(portfolioRepository.findAll());
+        List<PortfolioResponseDTO> response = portfolioRepository.findAll().stream().map(portfolio -> {
+            Resource image;
+            try {
+                image = imageServices.loadImage(portfolio.getImage().getUrl());
+            } catch (MalformedURLException | ImageNotFoundException e) {
+                image = null;
+            }
+            return new PortfolioResponseDTO(portfolio.getTitle(), portfolio.getDescription(), image);
+        }).toList();
+
+        return ResponseEntity.ok(response);
     }
     public ResponseEntity<?> getImage(Long id){
         Optional<Image> optionalImage = imageRepository.findById(id);

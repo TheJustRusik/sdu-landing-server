@@ -51,7 +51,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .formLogin(AbstractHttpConfigurer::disable);
+                .formLogin(form -> form.permitAll());
 
         return http.build();
     }

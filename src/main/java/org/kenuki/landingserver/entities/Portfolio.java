@@ -9,6 +9,8 @@ import lombok.Data;
 public class Portfolio {
     @Id
     private String title;
+
+    @Column(nullable = false)
     private String description;
 
     @ManyToOne

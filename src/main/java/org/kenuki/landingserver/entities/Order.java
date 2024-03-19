@@ -8,8 +8,8 @@ import java.sql.Timestamp;
 
 @Data
 @Entity
-@Table(name = "hot_requests")
-public class HotRequest {
+@Table(name = "orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,14 +18,13 @@ public class HotRequest {
     private String name;
 
     @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
     private String phone;
 
     @ManyToOne
     @JoinColumn(name = "type_id")
     private LandingType landingType;
+
+    private String email;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

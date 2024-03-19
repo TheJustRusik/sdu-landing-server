@@ -37,6 +37,7 @@ public class ImageServices {
 
     }
     public Image storeImage(MultipartFile image) throws IOException, BadImagePathException {
+
         if (image.isEmpty()){
             throw new IOException();
         }

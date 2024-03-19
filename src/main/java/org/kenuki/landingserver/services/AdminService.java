@@ -1,7 +1,7 @@
 package org.kenuki.landingserver.services;
 
 import lombok.AllArgsConstructor;
-import org.kenuki.landingserver.dtos.admin.PortfolioDTO;
+import org.kenuki.landingserver.dtos.PortfolioDTO;
 import org.kenuki.landingserver.entities.Image;
 import org.kenuki.landingserver.entities.Portfolio;
 import org.kenuki.landingserver.entities.User;
@@ -20,8 +20,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AdminService {
     private UserRepository userRepository;
-    private ColdRequestRepository coldRequestRepository;
-    private HotRequestRepository hotRequestRepository;
+    private OrdersRepository ordersRepository;
     private PasswordEncoder passwordEncoder;
     private ImageServices imageServices;
     private PortfolioRepository portfolioRepository;
@@ -46,6 +45,7 @@ public class AdminService {
     public ResponseEntity<?> addPortfolio(PortfolioDTO portfolioDTO){
         try{
             Image image = imageServices.storeImage(portfolioDTO.getImage());
+            imageRepository.save(image);
             Portfolio portfolio = new Portfolio();
             portfolio.setDescription(portfolioDTO.getDescription());
             portfolio.setImage(image);
@@ -53,6 +53,7 @@ public class AdminService {
             portfolioRepository.save(portfolio);
             return ResponseEntity.ok(DefaultMessages.success);
         }catch (BadImagePathException | IOException e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(DefaultMessages.cantSaveImage);
         }
     }
