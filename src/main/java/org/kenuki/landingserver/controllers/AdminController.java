@@ -19,7 +19,6 @@ import java.util.List;
 public class AdminController {
     private AdminService adminService;
     @GetMapping("/")
-    @PreAuthorize("hasAuthority('ADMIN')")
     public String getAdmin(){
         return "This data is only for admins!";
     }

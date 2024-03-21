@@ -39,3 +39,4 @@ out/
 ### data base files ###
 data.mv.db
 data.trace.db
+src/main/resources/production.properties
