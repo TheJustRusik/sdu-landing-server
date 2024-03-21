@@ -1,6 +1,5 @@
 package org.kenuki.landingserver.exceptions;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

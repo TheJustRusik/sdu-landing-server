@@ -3,20 +3,17 @@ package org.kenuki.landingserver.services;
 import lombok.AllArgsConstructor;
 import org.kenuki.landingserver.dtos.PortfolioDTO;
 import org.kenuki.landingserver.dtos.ReviewDTO;
-import org.kenuki.landingserver.entities.Portfolio;
-import org.kenuki.landingserver.entities.Review;
-import org.kenuki.landingserver.entities.User;
+import org.kenuki.landingserver.entities.*;
 import org.kenuki.landingserver.exceptions.BadImagePathException;
 import org.kenuki.landingserver.messages.DefaultMessages;
 import org.kenuki.landingserver.repositories.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,11 +21,13 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AdminService {
     private UserRepository userRepository;
-    private OrdersRepository ordersRepository;
     private ReviewRepository reviewRepository;
     private PasswordEncoder passwordEncoder;
     private ImageServices imageServices;
     private PortfolioRepository portfolioRepository;
+    private OrdersRepository ordersRepository;
+    private ContactRepository contactRepository;
+    //Password
     public ResponseEntity<?> updatePassword(String password, Authentication authentication){
         if(password.length() < 16){
             return ResponseEntity.badRequest().body("Password length < 16");
@@ -46,7 +45,7 @@ public class AdminService {
         userRepository.save(user);
         return ResponseEntity.ok("Password changed!");
     }
-
+    //Portfolios
     public ResponseEntity<?> addPortfolio(PortfolioDTO portfolioDTO){
         if(portfolioRepository.existsByImage(portfolioDTO.getImage().getOriginalFilename())){
             return ResponseEntity.badRequest().body(DefaultMessages.imageTitleAlreadyExist);
@@ -84,7 +83,6 @@ public class AdminService {
 
         return ResponseEntity.ok(DefaultMessages.success);
     }
-
     public ResponseEntity<?> updatePortfolio(Long id, PortfolioDTO portfolioDTO) {
         //Плохие случаи:
         //Обновление несуществующего портфолио
@@ -120,16 +118,14 @@ public class AdminService {
     public ResponseEntity<?> getPortfolio(Long id) {
         return ResponseEntity.ok(portfolioRepository.findById(id));
     }
-
+    //Reviews
     public ResponseEntity<?> getReview(Long id) {
         return ResponseEntity.ok(reviewRepository.findById(id));
     }
-
     public ResponseEntity<?> addReview(ReviewDTO reviewDTO) {
         reviewRepository.save(new Review(reviewDTO.getAuthor(), reviewDTO.getReview(), reviewDTO.getVisible()));
         return ResponseEntity.ok(DefaultMessages.success);
     }
-
     public ResponseEntity<?> updateReview(Long id, ReviewDTO reviewDTO) {
         Optional<Review> review = reviewRepository.findById(id);
         if(review.isEmpty())
@@ -141,13 +137,47 @@ public class AdminService {
         reviewRepository.save(newReview);
         return ResponseEntity.ok(DefaultMessages.success);
     }
-
     public ResponseEntity<?> deleteReview(Long id) {
         Optional<Review> review = reviewRepository.findById(id);
         if(review.isEmpty())
             return ResponseEntity.badRequest().body(DefaultMessages.reviewNotFound);
         else
             reviewRepository.delete(review.get());
+        return ResponseEntity.ok(DefaultMessages.success);
+    }
+    //Orders
+    public ResponseEntity<?> getOrders() {
+        return ResponseEntity.ok(ordersRepository.findAll());
+    }
+    public ResponseEntity<String> updateOrder(Long id, Integer status_code) {
+        Optional<Order> order = ordersRepository.findById(id);
+        if(order.isEmpty())
+            return ResponseEntity.badRequest().body(DefaultMessages.orderNotFound);
+        Order newOrder = order.get();
+        newOrder.setChecked(true);
+        if (status_code != null)
+            newOrder.setStatus(status_code);
+        ordersRepository.save(newOrder);
+        return ResponseEntity.ok(DefaultMessages.success);
+    }
+    public ResponseEntity<String> deleteOrder(Long id) {
+        if(ordersRepository.existsById(id)){
+            ordersRepository.deleteById(id);
+            return ResponseEntity.ok(DefaultMessages.success);
+        }
+        return ResponseEntity.badRequest().body(DefaultMessages.orderNotFound);
+    }
+
+    public ResponseEntity<List<Contact>> getAllContacts() {
+        return ResponseEntity.ok(contactRepository.findAll());
+    }
+    public ResponseEntity<String> updateContact(String key, String newValue) {
+        Optional<Contact> contact = contactRepository.findById(key);
+        if(contact.isEmpty())
+            return ResponseEntity.notFound().build();
+        Contact newContact = contact.get();
+        newContact.setValue(newValue);
+        contactRepository.save(newContact);
         return ResponseEntity.ok(DefaultMessages.success);
     }
 }

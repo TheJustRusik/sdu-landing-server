@@ -3,11 +3,14 @@ package org.kenuki.landingserver.controllers;
 import lombok.AllArgsConstructor;
 import org.kenuki.landingserver.dtos.PortfolioDTO;
 import org.kenuki.landingserver.dtos.ReviewDTO;
+import org.kenuki.landingserver.entities.Contact;
 import org.kenuki.landingserver.services.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -26,7 +29,7 @@ public class AdminController {
     public ResponseEntity<?> updatePassword(@RequestParam String new_password){
         return adminService.updatePassword(new_password, SecurityContextHolder.getContext().getAuthentication());
     }
-    //Portfolio
+    //Portfolios
     @GetMapping(path = "/portfolio/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getPortfolio(@PathVariable Long id){
@@ -34,7 +37,7 @@ public class AdminController {
     }
     @PostMapping(path = "/portfolio")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<?> createPortfolio(@ModelAttribute PortfolioDTO portfolioDTO){
+    public ResponseEntity<?> addPortfolio(@ModelAttribute PortfolioDTO portfolioDTO){
         return adminService.addPortfolio(portfolioDTO);
     }
     @PutMapping(path = "/portfolio/{id}")
@@ -68,5 +71,36 @@ public class AdminController {
     public ResponseEntity<?> deleteReview(@PathVariable Long id){
         return adminService.deleteReview(id);
     }
-
+    //Orders
+    @GetMapping("/order")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> getOrders() {
+        return adminService.getOrders();
+    }
+    @PutMapping("/order/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> setOrderStatus(@PathVariable Long id, @RequestParam Integer status_code){
+        return adminService.updateOrder(id, status_code);
+    }
+    @PatchMapping("/order/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> checkOrder(@PathVariable Long id) {
+        return adminService.updateOrder(id, null);
+    }
+    @DeleteMapping("/order/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> deleteOrder(@PathVariable Long id){
+        return adminService.deleteOrder(id);
+    }
+    //Contacts
+    @GetMapping("/contact")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<Contact>> getAllContacts(){
+        return adminService.getAllContacts();
+    }
+    @PutMapping("/contact/{key}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> updateContact(@PathVariable String key, @RequestParam String new_value){
+        return adminService.updateContact(key, new_value);
+    }
 }

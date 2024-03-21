@@ -13,5 +13,6 @@ public class DefaultMessages {
     public static final String cantSaveImage = "Can't save image!";
     public static final String imageTitleAlreadyExist = "Image with this title is already exist!";
     public static final String reviewNotFound = "Review not found!";
+    public static final String orderNotFound = "Order not found!";
 
 }

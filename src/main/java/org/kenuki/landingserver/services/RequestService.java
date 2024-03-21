@@ -32,6 +32,7 @@ public class RequestService {
     private ReviewRepository reviewRepository;
     private PortfolioRepository portfolioRepository;
     private ImageServices imageServices;
+    private ContactRepository contactRepository;
     public ResponseEntity<String> createNewHotRequest(HotRequestDTO hotRequestDTO){
         if(!EmailValidator.getInstance().isValid(hotRequestDTO.getEmail())){
             return ResponseEntity.badRequest().body(DefaultMessages.wrongMail);
@@ -103,4 +104,10 @@ public class RequestService {
 
     }
 
+
+    public ResponseEntity<String> getContact(String key) {
+        if(contactRepository.existsById(key))
+            return ResponseEntity.ok(contactRepository.findById(key).get().getValue());
+        return ResponseEntity.notFound().build();
+    }
 }

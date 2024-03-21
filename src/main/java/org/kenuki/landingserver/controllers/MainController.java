@@ -41,4 +41,8 @@ public class MainController {
     public ResponseEntity<?> getImage(@PathVariable String image_name){
         return requestService.getImage(image_name);
     }
+    @GetMapping("/contacts")
+    public ResponseEntity<String> getContact(@RequestParam String key){
+        return requestService.getContact(key);
+    }
 }

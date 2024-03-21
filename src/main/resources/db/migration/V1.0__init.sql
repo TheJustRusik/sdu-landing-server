@@ -38,6 +38,11 @@ create table portfolios (
     image           varchar(255) unique not null
 );
 
+create table contacts (
+    key             varchar(32) primary key,
+    value           text not null
+);
+
 insert into users values
                       (1, 'Admin', '$2a$05$qGutJh4i/RsIpwccDu4PQOSfCZoTMBARIqMgk0VMUTJvnzSL/36Fi', 'ADMIN');
 
@@ -45,5 +50,10 @@ insert into landing_types values
                               (1, 'Startup Landing Page', 70000, 30),
                               (2, 'Product Landing Page', 90000, 30),
                               (3, 'Consultation Landing Page', 11000, 30);
+
+insert into contacts values
+                              ('phone', '+7 (777) 777 7777'),
+                              ('email', 'technopark@sdu.edu.kz'),
+                              ('address', 'г. Каскелен Проспект Абылай Хана, 1/1')
 
 
