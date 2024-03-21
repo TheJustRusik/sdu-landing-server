@@ -39,8 +39,8 @@ create table portfolios (
 );
 
 create table contacts (
-    key             varchar(32) primary key,
-    value           text not null
+    name            varchar(32) primary key,
+    val             text not null
 );
 
 insert into users values
@@ -54,6 +54,6 @@ insert into landing_types values
 insert into contacts values
                               ('phone', '+7 (777) 777 7777'),
                               ('email', 'technopark@sdu.edu.kz'),
-                              ('address', 'г. Каскелен Проспект Абылай Хана, 1/1')
+                              ('address', 'г. Каскелен Проспект Абылай Хана, 1/1');
 
 
