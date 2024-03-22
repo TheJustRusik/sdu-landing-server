@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST})
 public class MainController {
     private RequestService requestService;
     @GetMapping("/")

@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class AdminController {
     private AdminService adminService;
     @Operation(summary = "Admin`s 'Hello, World!'", description = "Useless endpoint :)")
