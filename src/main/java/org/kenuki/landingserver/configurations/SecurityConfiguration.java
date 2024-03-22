@@ -38,6 +38,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/swagger/**", "/swagger", "/swagger-ui/**", "/swagger-ui").permitAll()
+                        .requestMatchers("/api-doc/**", "/api-goc").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

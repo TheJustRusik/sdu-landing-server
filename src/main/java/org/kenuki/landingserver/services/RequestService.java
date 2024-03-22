@@ -7,10 +7,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.kenuki.landingserver.dtos.ColdRequestDTO;
 import org.kenuki.landingserver.dtos.HotRequestDTO;
-import org.kenuki.landingserver.entities.LandingType;
-import org.kenuki.landingserver.entities.Order;
-import org.kenuki.landingserver.entities.Portfolio;
-import org.kenuki.landingserver.entities.Review;
+import org.kenuki.landingserver.entities.*;
 import org.kenuki.landingserver.exceptions.ImageNotFoundException;
 import org.kenuki.landingserver.messages.DefaultMessages;
 import org.kenuki.landingserver.repositories.*;
@@ -23,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @AllArgsConstructor
@@ -105,9 +104,7 @@ public class RequestService {
     }
 
 
-    public ResponseEntity<String> getContact(String key) {
-        if(contactRepository.existsById(key))
-            return ResponseEntity.ok(contactRepository.findById(key).get().getValue());
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<List<Contact>> getContact() {
+        return ResponseEntity.ok(contactRepository.findAll());
     }
 }
