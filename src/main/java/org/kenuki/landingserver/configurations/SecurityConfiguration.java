@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new CorsConfiguration();
                     corsConfig.setMaxAge(86400L);
-                    corsConfig.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8002", "https://localhost:8002", "http://landing.sdutechnopark.kz:8002", "https://landing.sdutechnopark.kz:8002",));//TODO: set real origin.
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8002", "https://localhost:8002", "http://landing.sdutechnopark.kz:8002", "https://landing.sdutechnopark.kz:8002"));//TODO: set real origin.
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(auth -> auth
